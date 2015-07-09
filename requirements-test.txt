@@ -1,3 +1,5 @@
-coverage
-coveralls
-pylama
+coverage==3.7.1
+coveralls==0.5
+django-environ==0.3.0
+pylama==6.3.4
+psycopg2==2.6.1

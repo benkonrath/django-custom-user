@@ -1,5 +1,9 @@
 # Config file for automatic testing at travis-ci.org
 
+# Use container-based infrastructure
+# http://docs.travis-ci.com/user/migrating-from-legacy/
+sudo: false
+
 language: python
 
 python:
@@ -10,19 +14,28 @@ env:
   global:
     - PYTHONPATH=$TRAVIS_BUILD_DIR
   matrix:
-    - DJANGO_VERSION="Django>=1.8,<1.9"
-    - DJANGO_VERSION="Django>=1.7,<1.8"
-    - DJANGO_VERSION="Django>=1.6,<1.7"
-    - DJANGO_VERSION="Django>=1.5,<1.6"
+    - DJANGO_VERSION="Django>=1.8,<1.9" DATABASE_URL="postgres://postgres@localhost/postgres"
+    - DJANGO_VERSION="Django>=1.8,<1.9" DATABASE_URL="sqlite://:memory:"
+    - DJANGO_VERSION="Django>=1.7,<1.8" DATABASE_URL="postgres://postgres@localhost/postgres"
+    - DJANGO_VERSION="Django>=1.7,<1.8" DATABASE_URL="sqlite://:memory:"
+    - DJANGO_VERSION="Django>=1.6,<1.7" DATABASE_URL="postgres://postgres@localhost/postgres"
+    - DJANGO_VERSION="Django>=1.6,<1.7" DATABASE_URL="sqlite://:memory:"
+    - DJANGO_VERSION="Django>=1.5,<1.6" DATABASE_URL="postgres://postgres@localhost/postgres"
+    - DJANGO_VERSION="Django>=1.5,<1.6" DATABASE_URL="sqlite://:memory:"
 
 matrix:
   include:
     - python: "2.6"
-      env: DJANGO_VERSION="Django>=1.5,<1.6"
+      env: DJANGO_VERSION="Django>=1.5,<1.6" DATABASE_URL="postgres://postgres@localhost/postgres"
+      env: DJANGO_VERSION="Django>=1.5,<1.6" DATABASE_URL="sqlite://:memory:"
     - python: "2.6"
-      env: DJANGO_VERSION="Django>=1.6,<1.7"
+      env: DJANGO_VERSION="Django>=1.6,<1.7" DATABASE_URL="postgres://postgres@localhost/postgres"
+      env: DJANGO_VERSION="Django>=1.6,<1.7" DATABASE_URL="sqlite://:memory:"
     - python: "3.4"
       env: DJANGO_VERSION="pylama"
+
+addons:
+  postgresql: "9.4"
 
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install:
