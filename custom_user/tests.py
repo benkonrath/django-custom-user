@@ -1,4 +1,6 @@
 """EmailUser tests."""
+from datetime import timedelta
+
 import django
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -39,20 +41,21 @@ class UserTest(TestCase):
 
     def test_user_creation(self):
         # Create a new user saving the time frame
-        before_creation = timezone.now()
+        # Microseconds removed because MySQL doesn't have this precision
+        before_creation = timezone.now().replace(microsecond=0)
         self.create_user()
-        after_creation = timezone.now()
+        after_creation = timezone.now().replace(microsecond=0) + timedelta(seconds=1)
 
         # Check user exists and email is correct
         self.assertEqual(get_user_model().objects.all().count(), 1)
         self.assertEqual(get_user_model().objects.all()[0].email, self.user_email)
 
         # Check date_joined, date_modified and last_login dates
-        self.assertLess(before_creation, get_user_model().objects.all()[0].date_joined)
-        self.assertLess(get_user_model().objects.all()[0].date_joined, after_creation)
+        self.assertLessEqual(before_creation, get_user_model().objects.all()[0].date_joined)
+        self.assertLessEqual(get_user_model().objects.all()[0].date_joined, after_creation)
 
-        self.assertLess(before_creation, get_user_model().objects.all()[0].last_login)
-        self.assertLess(get_user_model().objects.all()[0].last_login, after_creation)
+        self.assertLessEqual(before_creation, get_user_model().objects.all()[0].last_login)
+        self.assertLessEqual(get_user_model().objects.all()[0].last_login, after_creation)
 
         # Check flags
         self.assertTrue(get_user_model().objects.all()[0].is_active)
